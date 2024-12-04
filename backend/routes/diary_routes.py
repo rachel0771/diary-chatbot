@@ -18,7 +18,7 @@ def add_diary_entry():
     try:
         data = request.json
 
-        # 数据验证
+        # Validate input data
         if not isinstance(data.get("content"), str) or len(data["content"].strip()) == 0:
             return jsonify({"error": "Invalid content"}), 400
         if not isinstance(data.get("advantage"), str) or len(data["advantage"].strip()) == 0:
@@ -26,7 +26,7 @@ def add_diary_entry():
         if not isinstance(data.get("person"), str) or len(data["person"].strip()) == 0:
             return jsonify({"error": "Invalid person"}), 400
 
-        # 插入到 MongoDB
+        # Insert into MongoDB
         diary_collection.insert_one(data)
         return jsonify({"message": "Diary entry added successfully"}), 201
     except Exception as e:

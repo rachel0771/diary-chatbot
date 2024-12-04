@@ -10,15 +10,11 @@ CORS(app)  # Enable CORS for frontend-backend communication
 app.register_blueprint(diary_routes, url_prefix="/diary")
 app.register_blueprint(chatbot_routes, url_prefix="/chatbot")
 
-@app.route("/test-db", methods=["GET"])
-def test_db():
-    """Test connection to MongoDB."""
-    from config import diary_collection  # Import here to ensure it's defined
-    try:
-        doc = diary_collection.find_one()
-        return {"status": "success", "doc": doc}, 200
-    except Exception as e:
-        return {"status": "error", "message": str(e)}, 500
+@app.route("/")
+def home():
+    return "Welcome to the Diary Chatbot API!"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.getenv("PORT", 5050))
+    app.run(host="0.0.0.0", port=port, debug=True)
