@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { sendMessageToChatbot } from "../services/api"; // 引入API函数
+import { sendMessageToChatbot } from "../services/api"; // API function to interact with the backend
 
 const customModalStyles = {
     content: {
@@ -20,14 +20,25 @@ const customModalStyles = {
 Modal.setAppElement("#root");
 
 const Chatbot = () => {
-    const [message, setMessage] = useState(""); // 用户输入消息
-    const [response, setResponse] = useState(""); // Chatbot 的回复
-    const [isModalOpen, setIsModalOpen] = useState(false); // 控制弹窗状态
+    const [message, setMessage] = useState(""); // User input message
+    const [response, setResponse] = useState(""); // Chatbot's response
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
+    // Handle sending the message
     const handleSendMessage = () => {
+        if (message.trim().length === 0) {
+            setResponse("Please type a message.");
+            setIsModalOpen(true);
+            return;
+        }
+
         sendMessageToChatbot(message)
             .then((data) => {
-                setResponse(data.response || "No response from the chatbot.");
+                if (data && data.response) {
+                    setResponse(data.response);
+                } else {
+                    setResponse("No response from the chatbot.");
+                }
                 setIsModalOpen(true);
             })
             .catch((err) => {
@@ -35,7 +46,8 @@ const Chatbot = () => {
                 setResponse("Failed to communicate with the chatbot. Please try again.");
                 setIsModalOpen(true);
             });
-        setMessage(""); // 清空输入框
+
+        setMessage(""); // Clear the input field
     };
 
     return (
@@ -78,7 +90,7 @@ const Chatbot = () => {
                 Send
             </button>
 
-            {/* Display Chatbot response pop-up */}
+            {/* Modal to show the chatbot's response */}
             <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} style={customModalStyles}>
                 <p>{response}</p>
                 <button
