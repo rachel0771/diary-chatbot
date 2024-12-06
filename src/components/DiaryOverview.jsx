@@ -26,7 +26,11 @@ const DiaryOverview = () => {
     // Fetch diary entries from the backend when the component mounts
     useEffect(() => {
         fetchDiaryEntries()
-            .then((response) => setDiaryPosts(response.data))
+            .then((response) => {
+                // Only keep the latest 10 entries
+                const latestEntries = response.data.slice(-10).reverse();
+                setDiaryPosts(latestEntries);
+            })
             .catch((error) => console.error("Failed to fetch diary entries:", error));
     }, []);
 
@@ -39,7 +43,10 @@ const DiaryOverview = () => {
                 alert("New post created successfully!");
                 closeModal();
                 // Update the diary posts list to include the new post
-                setDiaryPosts([...diaryPosts, newPost]);
+                setDiaryPosts((prevPosts) => {
+                    const updatedPosts = [...prevPosts, newPost];
+                    return updatedPosts.length > 10 ? updatedPosts.slice(-10) : updatedPosts;
+                });
                 setNewPost({ content: "", advantage: "", person: "" });
             })
             .catch((error) => {
