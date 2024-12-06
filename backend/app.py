@@ -2,6 +2,11 @@ from flask import Flask
 from flask_cors import CORS
 from routes.chatbot_routes import chatbot_routes
 
+import os
+port = int(os.getenv("PORT", 5000))  # Default to 5000 if PORT is not set
+app.run(host='0.0.0.0', port=port)
+
+
 app = Flask(__name__)
 # Enable requests whiout limitations
 CORS(app, resources={r"/*": {"origins": "*"}})
