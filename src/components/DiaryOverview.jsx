@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { fetchDiaryEntries, addDiaryEntry } from "../services/api";  // 确保引入正确的 API 函数
+import { fetchDiaryEntries, addDiaryEntry } from "../services/api";
 
 const customModalStyles = {
     content: {
