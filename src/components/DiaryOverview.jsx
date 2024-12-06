@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
+import { fetchDiaryEntries, addDiaryEntry } from "../services/api";  // 确保引入正确的 API 函数
 
 const customModalStyles = {
     content: {
@@ -8,7 +9,7 @@ const customModalStyles = {
         transform: "translate(-50%, -50%)",
         padding: "20px",
         borderRadius: "15px",
-        width: "400px", // 调整宽度适配网页
+        width: "400px",
         height: "auto",
         boxShadow: "0 5px 15px rgba(0, 0, 0, 0.2)",
         backgroundColor: "#fdfbf3",
@@ -18,34 +19,34 @@ const customModalStyles = {
 Modal.setAppElement("#root");
 
 const DiaryOverview = () => {
-    const diaryPosts = [
-        {
-            content: "You did a great job on the project presentation.",
-            advantage: "Confident",
-            person: "Alex",
-        },
-        {
-            content: "Your kindness to help others is inspiring.",
-            advantage: "Kind",
-            person: "Taylor",
-        },
-        {
-            content: "You showed incredible patience and determination.",
-            advantage: "Patient",
-            person: "Jordan",
-        },
-        {
-            content: "Your creativity in designing the new layout was amazing.",
-            advantage: "Creative",
-            person: "Sam",
-        },
-    ];
-
+    const [diaryPosts, setDiaryPosts] = useState([]);  // Initial state to store diary posts
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newPost, setNewPost] = useState({ content: "", advantage: "", person: "" });
 
+    // Fetch diary entries from the backend when the component mounts
+    useEffect(() => {
+        fetchDiaryEntries()
+            .then((response) => setDiaryPosts(response.data))
+            .catch((error) => console.error("Failed to fetch diary entries:", error));
+    }, []);
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+    const handleSaveEntry = () => {
+        addDiaryEntry(newPost)
+            .then(() => {
+                alert("New post created successfully!");
+                closeModal();
+                // Update the diary posts list to include the new post
+                setDiaryPosts([...diaryPosts, newPost]);
+                setNewPost({ content: "", advantage: "", person: "" });
+            })
+            .catch((error) => {
+                console.error("Failed to create new post:", error);
+                alert("Failed to create new post. Please try again.");
+            });
+    };
 
     return (
         <div style={{ padding: "20px", display: "flex", gap: "20px", flexWrap: "wrap", justifyContent: "center" }}>
@@ -117,7 +118,7 @@ const DiaryOverview = () => {
                     Cancel
                 </button>
                 <button
-                    onClick={() => alert("New post created!")}
+                    onClick={handleSaveEntry}
                     style={{ padding: "10px 20px", backgroundColor: "#a8c3a1", border: "none", color: "#fff", borderRadius: "5px" }}
                 >
                     Save

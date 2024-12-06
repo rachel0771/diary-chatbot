@@ -17,17 +17,15 @@ def add_diary_entry():
     """Add a new diary entry."""
     try:
         data = request.json
+        print(f"Received data for new entry: {data}")  # 添加日志，查看接收到的数据
 
-        # Validate input data
-        if not isinstance(data.get("content"), str) or len(data["content"].strip()) == 0:
-            return jsonify({"error": "Invalid content"}), 400
-        if not isinstance(data.get("advantage"), str) or len(data["advantage"].strip()) == 0:
-            return jsonify({"error": "Invalid advantage"}), 400
-        if not isinstance(data.get("person"), str) or len(data["person"].strip()) == 0:
-            return jsonify({"error": "Invalid person"}), 400
+        if not data.get("content") or not data.get("advantage") or not data.get("person"):
+            print("Missing required fields:", data)
+            return jsonify({"error": "Missing required fields"}), 400
 
-        # Insert into MongoDB
         diary_collection.insert_one(data)
+        print("Successfully added:", data)
         return jsonify({"message": "Diary entry added successfully"}), 201
     except Exception as e:
+        print("Error adding diary entry:", str(e))
         return jsonify({"status": "error", "message": str(e)}), 500

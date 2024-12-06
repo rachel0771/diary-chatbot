@@ -1,27 +1,10 @@
-const API_BASE_URL = "http://127.0.0.1:5000";
+// import axios
+import axios from 'axios';
 
-export const fetchDiaryEntries = () =>
-    fetch(`${API_BASE_URL}/diary`)
-        .then((res) => res.json())
-        .catch((err) => console.error("Error fetching diary entries:", err));
+// import API URL
+const API_BASE_URL = "https://diary-chatbot.onrender.com";
 
-export const addDiaryEntry = (data) =>
-    fetch(`${API_BASE_URL}/diary`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    })
-        .then((res) => res.json())
-        .catch((err) => console.error("Error adding diary entry:", err));
 
-export const sendMessageToChatbot = (message) =>
-    fetch(`${API_BASE_URL}/chatbot`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-    })
-        .then((res) => res.json())
-        .catch((err) => {
-            console.error("Error sending message to chatbot:", err);
-            throw err;
-        });
+export const fetchDiaryEntries = () => axios.get(`${API_BASE_URL}/diary`);
+export const addDiaryEntry = (data) => axios.post(`${API_BASE_URL}/diary`, data);
+export const sendMessageToChatbot = (message) => axios.post(`${API_BASE_URL}/chatbot`, { message });
