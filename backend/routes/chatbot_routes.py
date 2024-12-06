@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from config import diary_collection  # Import the collection from config.py
+from config import diary_collection
 import random
 
 chatbot_routes = Blueprint("chatbot_routes", __name__)
@@ -37,4 +37,4 @@ def get_motivational_message():
     except Exception as e:
         # Print error and return a generic response
         print("Error generating motivational message:", str(e))
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"response": "An error occurred while generating the message."}), 500

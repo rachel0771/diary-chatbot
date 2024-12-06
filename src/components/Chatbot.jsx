@@ -17,6 +17,7 @@ const customModalStyles = {
     },
 };
 
+// Set the root element for accessibility purposes
 Modal.setAppElement("#root");
 
 const Chatbot = () => {
@@ -24,30 +25,33 @@ const Chatbot = () => {
     const [response, setResponse] = useState(""); // Chatbot's response
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
-    // Handle sending the message
-    const handleSendMessage = () => {
+    // Handle sending the message to the backend chatbot API
+    const handleSendMessage = async () => {
+        // Check if the input message is empty
         if (message.trim().length === 0) {
             setResponse("Please type a message.");
             setIsModalOpen(true);
             return;
         }
 
-        sendMessageToChatbot(message)
-            .then((data) => {
-                if (data && data.response) {
-                    setResponse(data.response);
-                } else {
-                    setResponse("No response from the chatbot.");
-                }
-                setIsModalOpen(true);
-            })
-            .catch((err) => {
-                console.error("Error communicating with the chatbot:", err);
-                setResponse("Failed to communicate with the chatbot. Please try again.");
-                setIsModalOpen(true);
-            });
+        try {
+            // Send message to the backend chatbot API
+            const { data } = await sendMessageToChatbot(message);
+            // Check if the response contains the 'response' field
+            if (data && data.response) {
+                setResponse(data.response);
+            } else {
+                setResponse("No response from the chatbot.");
+            }
+        } catch (err) {
+            console.error("Error communicating with the chatbot:", err);
+            setResponse("Failed to communicate with the chatbot. Please try again.");
+        }
 
-        setMessage(""); // Clear the input field
+        // Open the response modal
+        setIsModalOpen(true);
+        // Clear the input field
+        setMessage("");
     };
 
     return (
